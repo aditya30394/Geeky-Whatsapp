@@ -21,7 +21,8 @@ public class ChatServer {
     private static SimpleDateFormat sdf;
 
     public static void main(String args[]) {
-        
+        // to display hh:mm:ss
+        sdf = new SimpleDateFormat("HH:mm:ss");
         // The default port number.
         int portNumber = 5000 ;
         switch(args.length)
