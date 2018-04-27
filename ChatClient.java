@@ -110,6 +110,7 @@ public class ChatClient{
                     if(msg.equalsIgnoreCase("SIGNOUT")) 
                     {
                         sendMessage(new Message(MessageType.SIGNOUT, ""));
+                        Thread.sleep(2000);
                         break;
                     }
                     // message to check who are present in chatroom

@@ -21,6 +21,7 @@ public class ChatServer {
     private static SimpleDateFormat sdf;
 
     public static void main(String args[]) {
+        clients = new ArrayList<>();
         // to display hh:mm:ss
         sdf = new SimpleDateFormat("HH:mm:ss");
         // The default port number.
@@ -152,6 +153,7 @@ class ClientThread extends Thread {
     public ClientThread(Socket clientSocket,ArrayList<ClientThread> threads) {
         this.clientSocket = clientSocket;
         this.threads = threads;
+        sdf = new SimpleDateFormat("HH:mm:ss");
         /*
          * Create input and output streams for this client.
          */
@@ -202,7 +204,6 @@ class ClientThread extends Thread {
             String name = "";
             while (true) 
             {
-                os.writeObject("Enter your name.");
                 try
                 {
                     name = (String) is.readObject();
@@ -270,30 +271,28 @@ class ClientThread extends Thread {
                 case SIGNOUT:
                     display(clientName + " disconnected with a SIGNOUT message.");
                     ContinueConversation = false;
+                    os.writeObject("*** Bye " + clientName + " ***");
                     break;
                 case GETUSERS:
                     os.writeObject("List of the users connected at " + sdf.format(new Date()) + "\n");
                     // send list of active clients
-                    for(ClientThread ct : threads) {
-                        os.writeObject(" @@@ " + ct.GetClientName() + " since " + ct.date + "\n");
+                    for(ClientThread ct : threads) 
+                    {
+                        if(ct != this)
+                        {
+                            os.writeObject(" @@@ " + ct.GetClientName() + " since " + ct.date + "\n");  
+                        }   
                     }
                     break;
                 }    
             }
             broadcast(" *** User " + clientName + " is leaving the chat room." + " *** ");
-            os.writeObject("*** Bye " + clientName + " ***");
 
       /*
        * Clean up. Set the current thread variable to null so that a new client
        * could be accepted by the server.
        */
-            synchronized (this) {
-                for (ClientThread ct : threads) {
-                    if (ct == this) {
-                        ct = null;
-                    }
-                }
-            }
+            threads.remove(this);
       /*
        * Close the output stream, close the input stream, close the socket.
        */
@@ -321,7 +320,7 @@ class ClientThread extends Thread {
             String tocheck=w[1].substring(1, w[1].length());
             
             message=w[0]+w[2];
-            String messageLf = time + " " + message + "\n";
+            String messageLf = time + " (Private Message) " + message + "\n";
             boolean found=false;
             // we loop in reverse order to find the mentioned username
             for(int y=threads.size(); --y>=0;)
