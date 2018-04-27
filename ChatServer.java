@@ -198,11 +198,17 @@ class ClientThread extends Thread {
         ArrayList<ClientThread> threads = this.threads;
         try 
         {
-            String name;
+            String name = "";
             while (true) 
             {
                 os.writeObject("Enter your name.");
-                name = (String) is.readObject();
+                try
+                {
+                    name = (String) is.readObject();
+                }
+                catch (ClassNotFoundException e)
+                {
+                }
                 if (name.indexOf('@') == -1) 
                 {
                     for(ClientThread ct: threads)
@@ -242,6 +248,9 @@ class ClientThread extends Thread {
                 {
                     display(clientName + " Exception reading Streams: " + e);
                     break;              
+                }
+                catch (ClassNotFoundException e)
+                {
                 }
                 // get the message from the Message object received
                 String message = msg.getMessage();
