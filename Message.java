@@ -4,11 +4,6 @@ import java.io.*;
  * Clients and the Server. 
  */
 
-public enum MessageType {
-    GETUSERS,
-    MESSAGE,
-    SIGNOUT
-}
 public class Message implements Serializable {
 
 	// The different types of message sent by the Client
@@ -19,7 +14,7 @@ public class Message implements Serializable {
 	private String message;
 	
 	// constructor
-	ChatMessage(MessageType type, String message) {
+	Message(MessageType type, String message) {
 		this.type = type;
 		this.message = message;
 	}
