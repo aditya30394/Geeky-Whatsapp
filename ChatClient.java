@@ -139,18 +139,42 @@ public class ChatClient{
     /* To start the chat client
      */
     public static void start() {        
-        // creates the Thread to listen from the server 
-        new MessageListener(is).start();
         // Send our username to the server this is the only message that we
         // will send as a String. All other messages will be Message objects
         try
         {
             os.writeObject(username);
+            boolean NameIsNotOk = true;
+            while(NameIsNotOk)
+            {
+                // read the message form the input datastream
+                String msg = (String) is.readObject();
+                // print the message
+                System.out.println(msg);
+                System.out.print("> ");
+                if(msg.equals("OK NAME"))
+                {
+                    NameIsNotOk = false;
+                    username = msg;
+                }
+                else
+                {
+                    // read the new name from user
+                    String newName = scan.nextLine();
+                    os.writeObject(newName);
+                }    
+            }    
+            
+            
         }
         catch (IOException eIO) {
             display("Exception doing login : " + eIO);
             CloseAll();
         }
+        catch(ClassNotFoundException e) {
+        }
+        // creates the Thread to listen from the server 
+        new MessageListener(is).start();        
     }
 
     /*

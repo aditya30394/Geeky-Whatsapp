@@ -202,7 +202,8 @@ class ClientThread extends Thread {
         try 
         {
             String name = "";
-            while (true) 
+            boolean nameCheckFailed=true;
+            while (nameCheckFailed) 
             {
                 try
                 {
@@ -211,31 +212,34 @@ class ClientThread extends Thread {
                 catch (ClassNotFoundException e)
                 {
                 }
-                if (name.indexOf('@') == -1) 
+                if (name.indexOf('@') == -1 && name.indexOf(' ') == -1) 
                 {
+                    boolean ClientsWithSameNameExists=false;
                     for(ClientThread ct: threads)
                     {
                         if(ct != this)
                         {
                             if(name.equals(ct.GetClientName()))
                             {
-                                os.writeObject("The name " + name + " is already taken. Please use a different username.\n");
-                                continue;               
+                                os.writeObject("The name " + name + " is already taken. Please enter a different username.\n");
+                                ClientsWithSameNameExists = true;
+                                break;              
                             }   
                         }   
                     }
-                    break;
+                    nameCheckFailed = ClientsWithSameNameExists;
                 } 
                 else 
                 {
-                    os.writeObject("The name should not contain '@' character.");
+                    os.writeObject("The name should not contain '@' character or space. Please enter a different username.\n");
                 }
             }
+            os.writeObject("OK NAME");
             clientName=name;
 
         /* Welcome the new the client. */
         os.writeObject("Welcome " + clientName
-                    + " to our chat room.\nTo leave enter \"quit\" in a new line. To send private method use @user message");
+                    + " to our chat room.\nTo leave enter \"signout\" in a new line. To send private method use @user message");
         broadcast(" *** A new user " + clientName + " has joined the chat room." + " *** ");    
         
       /* Start the conversation. */
@@ -278,7 +282,7 @@ class ClientThread extends Thread {
                     // send list of active clients
                     for(ClientThread ct : threads) 
                     {
-                        if(ct != this)
+                        if((ct != this) && (ct.GetClientName() != null))
                         {
                             os.writeObject(" @@@ " + ct.GetClientName() + " since " + ct.date + "\n");  
                         }   
@@ -327,7 +331,7 @@ class ClientThread extends Thread {
             {
                 ClientThread ct1=threads.get(y);
                 String check=ct1.GetClientName();
-                if(check.equals(tocheck))
+                if(check != null && check.equals(tocheck))
                 {
                     // try to write to the Client if it fails remove it from the list
                     if(!ct1.writeMsg(messageLf)) {
@@ -336,6 +340,8 @@ class ClientThread extends Thread {
                     }
                     // username found and delivered the message
                     found=true;
+                    // display message
+                    System.out.print(messageLf);
                     break;
                 }
                 
@@ -360,10 +366,14 @@ class ClientThread extends Thread {
             for(int i = threads.size(); --i >= 0;) {
                 ClientThread ct = threads.get(i);
                 // try to write to the Client if it fails remove it from the list
-                if(!ct.writeMsg(messageLf)) {
-                    threads.remove(i);
-                    display("Disconnected Client " + ct.GetClientName() + " removed from list.");
-                }
+                if(ct.GetClientName() != null)
+                {
+                    if(!ct.writeMsg(messageLf)) 
+                    {
+                        threads.remove(i);
+                        display("Disconnected Client " + ct.GetClientName() + " removed from list.");
+                    }   
+                }                   
             }
         }
         return true;
