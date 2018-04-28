@@ -28,12 +28,11 @@ java ChatServer
 java ChatServer [portNumber]
 ```
 If the port number is not specified, port 5000 is used by default
-
 <p align="center">
-<figure align="center">
+  <figure align="center">
   <img src="https://raw.githubusercontent.com/aditya30394/geeky-whatsapp/master/images/starting-the-server.png">
   <figcaption>Starting the Chat Server</figcaption>
-</figure>  
+  </figure>
   <br/>
 </p>
 
