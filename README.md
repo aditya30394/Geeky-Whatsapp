@@ -5,9 +5,9 @@ A server continuously listens for connection requests from clients across the ne
 Clients connect to the server using an IP address and port number. The client needs to provide a unique username while 
 connecting to the server. This username is treated as the unique identifier for that client.
 
-All the messages from client are sent to the server using ObjectOutputStream in java. After receiving the message 
+All the messages from the client are sent to the server using ObjectOutputStream in java. After receiving the message 
 from the client, the server broadcasts the message if it is not a private message. And if it is a private message, which is 
-detect using ‘@’ followed by a valid username, sends the message only to that user.
+detected using ‘@’ followed by a valid username, sends the message only to that user.
 
 All the messages sent from various clients can be seen on the server console.
 
